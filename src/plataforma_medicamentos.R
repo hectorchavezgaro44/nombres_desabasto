@@ -6,7 +6,7 @@ source(here::here("src","clave_estados.R"))
 # instituciones -----------------------------------------------------------
 
 
-barras <- conestados %>% 
+conestados %>% 
   janitor::clean_names() %>% 
   mutate(fecha_solicitud=lubridate::ymd(fecha_solicitud)) %>% 
   group_by(institucion) %>% 
@@ -24,7 +24,7 @@ barras <- conestados %>%
                                                   ({scales::percent(pct, accuracy=0.1)})")))+
   scale_fill_manual(values=c("#005835", "#24893D","#8A1538")) +
   labs(title ="Medicamentos solicitados, por institución",
-       subtitle="Desde el 2 de junio al 28 de julio de 2025", x = "",
+       subtitle="Desde el 2 de junio al 25 de julio de 2025", x = "",
        y = "Total de claves (medicamentos)",
        caption = stringr::str_wrap(glue::glue("Fuente: Con datos de la Plataforma de Monitoreo de Medicamentos"), 100),
        fill="") +
@@ -41,6 +41,7 @@ barras <- conestados %>%
         axis.ticks.y=element_blank(),
         axis.text = element_text(size = 10, face = "bold")) +
   coord_flip()
+ggsave(here("out", "barras_instituciones.png"), width = 11, height = 7, units="in")
 
 
 b2<- conestados%>% 
@@ -66,7 +67,7 @@ b2 %>% ggplot(aes(fill=estatus,
   scale_fill_manual(values=c("COMPLETA"="#ffffb2", "EN TRÁNSITO"= "#fd8d3c",
                              "INCOMPLETA"="#f03b20", "INCUMPLIDA"="#bd0026")) +
   labs(title ="Estado de entrega de medicamentos solicitados, por institución",
-       subtitle="Del 2 de junio al 28 de julio de 2025", x = "",
+       subtitle="Del 2 de junio al 25 de julio de 2025", x = "",
        y = "% de claves (medicamentos)",
        caption = stringr::str_wrap(glue::glue("Fuente: Con datos de la Plataforma de Monitoreo de Medicamentos"), 100),
        fill="") +
@@ -83,11 +84,12 @@ b2 %>% ggplot(aes(fill=estatus,
         axis.ticks.y=element_blank(),
         axis.text = element_text(size = 10, face = "bold"))
 
+ggsave(here("out", "stack_instituciones.png"), width = 11, height = 7, units="in")
 
 
 # estatus total -----------------------------------------------------------
 
-barras <- conestados %>% 
+conestados %>% 
   janitor::clean_names() %>% 
   mutate(fecha_solicitud=lubridate::ymd(fecha_solicitud)) %>% 
   group_by(estatus) %>% 
@@ -106,7 +108,7 @@ barras <- conestados %>%
   scale_fill_manual(values=c("COMPLETA"="#ffffb2", "EN TRÁNSITO"= "#fd8d3c",
                              "INCOMPLETA"="#f03b20", "INCUMPLIDA"="#bd0026")) +
   labs(title ="Medicamentos solicitados, por estatus de entrega",
-       subtitle="Desde el 2 de junio al 28 de julio de 2025", x = "",
+       subtitle="Desde el 2 de junio al 25 de julio de 2025", x = "",
        y = "Total de claves (medicamentos)",
        caption = stringr::str_wrap(glue::glue("Fuente: Con datos de la Plataforma de Monitoreo de Medicamentos"), 100),
        fill="") +
@@ -121,8 +123,11 @@ barras <- conestados %>%
         panel.border =   element_blank(),
         axis.title = element_text(size = 14, face = "bold"),
         axis.ticks.y=element_blank(),
-        axis.text = element_text(size = 10, face = "bold")) +
+        axis.text = element_text(size = 9, face = "bold")) +
   coord_flip()
+ggsave(here("out", "barras_totales.png"), width = 11, height = 7, units="in")
+
+
 
 # estados -----------------------------------------------------------------
 
@@ -150,7 +155,7 @@ ggplot(c_25, aes("", porc, fill = estatus)) +
   facet_geo(~name, grid = "mx_state_grid2") +
   scale_y_continuous(expand = c(0, 0)) +
   labs(title ="Estatus de la entrega de medicamentos solicitados por estado",
-       subtitle="Del 2 de junio al 28 de julio de 2025", x = "",
+       subtitle="Del 2 de junio al 25 de julio de 2025", x = "",
        y = "",
        caption = stringr::str_wrap(glue::glue("Fuente: Con datos de la Plataforma de Monitoreo de Medicamentos"), 100),
        fill="") +
@@ -168,7 +173,7 @@ ggplot(c_25, aes("", porc, fill = estatus)) +
                                       fill="white"))
 
 
-ggsave(here("out", "mapa.png"), width = 12, height = 8, units="in")
+ggsave(here("out", "mapa.png"), width = 13, height = 9, units="in")
 
 
 
@@ -207,18 +212,19 @@ c_25 %>%
   ggplot( aes(y=entidad, x=dias)) +
   geom_density_ridges(fill="#fdbb84") +
   labs(title =stringr::str_wrap(glue::glue("Distribución del número de días entre el pedido y la entrega de insumos médicos, por estado"), 100),
-       subtitle="Del 2 de junio al 18 de julio de 2025", x = "Total de días",
+       subtitle="Del 2 de junio al 25 de julio de 2025", x = "Total de días",
        y = "",
        caption = stringr::str_wrap(glue::glue("Fuente: Con datos de la Plataforma de Monitoreo de Medicamentos"), 100),
        fill="") +
   xlim(0, 35)+
   theme_ridges() +
   theme(text = element_text(color = "grey35"),
-        plot.title = element_text(size = 15, face = "bold",  color = "grey35"),
+        plot.title = element_text(size = 10, face = "bold",  color = "grey35"),
         plot.subtitle = element_text(size = 10, face = "bold", colour = "#666666"),
         axis.text.x = element_text(face="bold",  color = "grey35"),
         axis.text.y = element_text(face="bold",  color = "grey35"))
 
+ggsave(here("out", "distribucion_dias.png"), width = 13, height = 9, units="in")
 
 # observatorio desabasto --------------------------------------------------
 
@@ -297,7 +303,7 @@ prove_inclum <- conestados %>%
   summarise(n=n()) %>% 
   ungroup() %>% 
   filter(estatus=="INCUMPLIDA") %>% 
-  mutate(total=20260,
+  mutate(total=sum(n, na.rm=T),
          porc_incum=round((n/total)*100,2)) %>% 
   select(proveedor, porc_incum)
 
@@ -307,11 +313,29 @@ scatplot <- left_join(prove_inclum, prove_porc)
 scatplot %>% 
   ggplot( aes(x = porc_incum, y =porc_claves)) +
   geom_point(alpha = .8, color = "#006837", size=3) +
-  theme_bw()+
+  geom_text_repel(
+    data = scatplot %>%
+      filter(porc_incum>4)%>%
+      mutate(proveedor = stringr::str_to_lower(proveedor),
+             proveedor = stringr::str_to_title(proveedor)),
+    aes(x = porc_incum, y = porc_claves,label = stringr::str_wrap(proveedor, 35)),
+    size = 3, nudge_y = 1, segment.size = 0.2
+  )+
+  geom_text_repel(
+    data = scatplot %>%
+      filter(porc_claves>1.95)%>%
+      mutate(proveedor = stringr::str_to_lower(proveedor),
+             proveedor = stringr::str_to_title(proveedor)),
+    aes(x = porc_incum, y = porc_claves,label = stringr::str_wrap(proveedor, 35)),
+    size = 3, nudge_y = 1, segment.size = 0.2
+  )+
+  # scale_x_log10() +
+  # scale_y_log10() +
   geom_abline(slope=1, intercept = 0, color="red")+
   xlim(0, 9)+
   ylim(0, 9)+
-  labs(title="Porcentaje de claves por proveedor vs. \nporcentaje de claves incomplidas por proveedor", 
+  labs(title="Porcentaje de claves incumplidas por proveedor vs. Porcentaje de claves por proveedor", 
+       subtitle="Del 2 de junio al 25 de julio de 2025",
      x= "% claves incumplidas por proveedor", 
      y= "% claves por proveedor")+  
   theme_bw()+
@@ -321,6 +345,7 @@ scatplot %>%
         axis.text.x = element_text(face="bold",  color = "grey35"),
         axis.text.y = element_text(face="bold",  color = "grey35"))
 
+ggsave(here("out", "scatter.png"), width = 10, height = 7, units="in")
 
 # tiempo y claves ---------------------------------------------------------
 
@@ -347,7 +372,8 @@ prove_tiempo <- prove_tiempo %>%
 mutate(
   es_outlier = prom_dias > (media_global + 2 * sd_global / sqrt(total_claves)),
   marcar_proveedor = es_outlier & total_claves >= 500 & prom_dias >= 20,
-  )
+  tiempo=case_when(es_outlier==T ~ "Lento", 
+                   es_outlier==F ~ "Normal"))
 
 
 
@@ -356,7 +382,7 @@ prove_tiempo %>%
   mutate(proveedor = stringr::str_to_lower(proveedor),
     proveedor = stringr::str_to_title(proveedor)) %>% 
 ggplot() +
-  geom_point(aes(x = total_claves, y = prom_dias, color = es_outlier),
+  geom_point(aes(x = total_claves, y = prom_dias, color = tiempo),
     size = 3,
              position = position_jitter(width = 0.1, height = 0)) +
   scale_color_manual(values=c("#ffffb2", "#fd8d3c"))+
@@ -365,14 +391,14 @@ ggplot() +
     data = filter(prove_tiempo, marcar_proveedor==T),
     aes(x = total_claves, y = prom_dias, color=marcar_proveedor),  size = 3,
     position = position_jitter(width = 0.1, height = 0), color="#bd0026") +
-  # geom_text_repel(
-  #   data = prove_tiempo %>% 
-  #     filter(marcar_proveedor==T)%>% 
-  #     mutate(proveedor = stringr::str_to_lower(proveedor),
-  #            proveedor = stringr::str_to_title(proveedor)),
-  #   aes(x = total_claves, y = prom_dias,label = stringr::str_wrap(proveedor, 35)),
-  #   size = 3, nudge_y = 1, segment.size = 0.2
-  # )+
+  geom_text_repel(
+    data = prove_tiempo %>%
+      filter(marcar_proveedor==T)%>%
+      mutate(proveedor = stringr::str_to_lower(proveedor),
+             proveedor = stringr::str_to_title(proveedor)),
+    aes(x = total_claves, y = prom_dias,label = stringr::str_wrap(proveedor, 35)),
+    size = 3, nudge_y = 1, segment.size = 0.2
+  )+
 
   # Banda superior: media + 2·sd/√n
   stat_function(
@@ -384,10 +410,12 @@ ggplot() +
     fun = function(x) media_global - 2 * sd_global / sqrt(x),
     linetype = "dashed"
   ) +
-  scale_x_log10() +
-  labs(title="Porcentaje de claves de cada proveedor vs. \nTiempo de entrega", 
-       x= "Total de claves del proveedor (escala logarítmica)", 
-       y= "Tiempo promedio de entrega (dias)")+  
+  # scale_x_log10() +
+  labs(title="Total de claves de cada proveedor vs. Tiempo promedio de entrega", 
+       subtitle="Del 2 de junio al 25 de julio de 2025",
+       x= "Total de claves del proveedor", 
+       y= "Tiempo promedio de entrega (dias)", 
+       color= stringr::str_wrap("Tiempo de entrega promedio", 20))+  
   theme_bw()+
   theme(text = element_text(color = "grey35"),
         plot.title = element_text(size = 15, face = "bold",  color = "grey35"),
@@ -395,7 +423,7 @@ ggplot() +
         axis.text.x = element_text(face="bold",  color = "grey35"),
         axis.text.y = element_text(face="bold",  color = "grey35"))
 
-ggsave(here("out", "funnel_plot.png"), width = 15, height = 7, units="in")
+ggsave(here("out", "funnel_plot.png"), width = 14, height = 9, units="in")
 
 outliers <- prove_tiempo %>% 
   filter(marcar_proveedor==T) %>% 
@@ -417,14 +445,15 @@ t <- conestados %>%
   summarise(n=n()) %>% 
   ungroup() %>% 
   filter(!is.na(proveedor)) %>% 
-  mutate(pct=round((n/225989)*100, 2)) %>% 
+  mutate(totales=sum(n, na.rm = T),
+    pct=round((n/totales)*100, 2)) %>% 
   arrange(-pct) %>% 
   mutate(acumulado = cumsum(pct))
   
 
 # medicamentos ------------------------------------------------------------
 
-medi <- read_excel("Downloads/entregas(1).xlsx") %>% 
+medi <- conestados%>% 
   janitor::clean_names() %>% 
   mutate(fecha_solicitud=lubridate::ymd(fecha_solicitud)) %>%
   filter(estatus=="INCUMPLIDA" | estatus=="INCOMPLETA") %>%
@@ -435,20 +464,60 @@ medi <- read_excel("Downloads/entregas(1).xlsx") %>%
   group_by(descripcion) %>% 
   summarise(total_faltantes=sum(faltantes, na.rm=T)) %>% 
   ungroup() %>% 
-  arrange(-total_faltantes)
-# %>% 
-#   arrange(-total_faltantes)%>% 
-#     head(10)
-# 
-#   write_csv(medi, "Downloads/muestra_piezas_faltantes.csv")
+  arrange(-total_faltantes) %>% 
+  head(15) %>% 
+  mutate(nombre = case_when(stringr::str_detect(descripcion, "CEPILLOS") ~ "Cepillos dentales", 
+         stringr::str_detect(descripcion, "COMPLEJO B") ~ "Complejo B",
+         stringr::str_detect(descripcion, "METFORMINA") ~ "Metformina",
+         stringr::str_detect(descripcion, "CLORURO DE SODIO. SOLUCIÓN INYECTABLE") ~ "Cloruro de sodio inyectable",
+         stringr::str_detect(descripcion, "BOTAS") ~ "Bota quirúrgica de tela",
+         stringr::str_detect(descripcion, "PINAVERIO") ~ "Tabletas de pinaverio",
+         stringr::str_detect(descripcion, "NORMOGOTERO") ~ "Equipo para venoclisis - normogotero",
+         stringr::str_detect(descripcion, "DIETA") ~ "Dieta polimérica con fibra",
+         stringr::str_detect(descripcion, "JERINGAS") ~ "Jeringas para insulina",
+         stringr::str_detect(descripcion, "ACETILSALICILICO") ~ "Ácido acetilsalicílico",
+         stringr::str_detect(descripcion, "ESPEJO") ~ "Espejo vaginal",
+         stringr::str_detect(descripcion, "HARTMANN") ~ "Solución Hartmann",
+         stringr::str_detect(descripcion, "FÓLICO") ~ "Ácido fólico",
+         stringr::str_detect(descripcion, "MICROGOTERO") ~ "Equipo para venoclisis - Microgotero",
+         stringr::str_detect(descripcion, "CATÉTERES") ~ "Catéteres para oxígeno"))
 
+medi %>% 
+  ggplot(aes(x = reorder(nombre, total_faltantes),
+             y= total_faltantes)) +
+  geom_bar(stat="identity", position="dodge", fill="#fdae61") +
+  geom_vline(xintercept = 0)+
+  ggfittext::geom_bar_text(outside = T,contrast = T,
+                           aes(label=glue::glue("{scales::comma(total_faltantes, accuracy=1)}")))+
+  labs(title ="Total de piezas incumplidas, por medicamento",
+       subtitle="Desde el 2 de junio al 25 de julio de 2025", x = "",
+       y = "Total de piezas",
+       caption = stringr::str_wrap(glue::glue("Fuente: Con datos de la Plataforma de Monitoreo de Medicamentos"), 100),
+       fill="") +
+  scale_y_continuous(labels = scales::label_comma(accuracy = 1))+
+  theme_bw()+
+  theme(text = element_text(color = "grey35"),
+        axis.text.x=element_blank(),
+        plot.title = element_text(size = 15, face = "bold",  color = "grey35"),
+        plot.subtitle = element_text(size = 10, face = "bold", colour = "#666666"),
+        plot.caption = element_text(size = 10),
+        legend.position = "none",
+        panel.grid = element_blank(),
+        panel.border =   element_blank(),
+        axis.title = element_text(size = 14, face = "bold"),
+        axis.title.x=element_blank(),
+        axis.ticks.x=element_blank() 
+        ) +
+  coord_flip()
 
-demanda <- read_excel("Downloads/entregas(1).xlsx") %>% 
+ggsave(here("out", "insumos_faltantes.png"), width = 11, height = 7, units="in")
+
+demanda <- conestados %>% 
   janitor::clean_names() %>% 
   group_by(descripcion) %>% 
   summarise(total_demanda=sum(piezas_solicitadas, na.rm=T)) %>% 
   ungroup() %>% 
-  arrange(-total_demanda) %>% 
+  arrange(-total_demanda)
   
   
   
