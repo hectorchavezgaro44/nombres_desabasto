@@ -226,53 +226,6 @@ c_25 %>%
 
 ggsave(here("out", "distribucion_dias.png"), width = 13, height = 9, units="in")
 
-# observatorio desabasto --------------------------------------------------
-
-obs <- read_csv(("Downloads/csv(1).csv"))
-
-enfermedad <- read_csv("Downloads/csv(2).csv")
-
-
-# diferencias en dias por institucion -------------------------------------
-
-# 
-# c_25 <- conestados %>% 
-#   mutate(fecha_solicitud=lubridate::ymd(fecha_solicitud), 
-#          fecha_entrega=lubridate::ymd(fecha_entrega), 
-#          fecha_corte=lubridate::ymd("2025-07-25"), 
-#          dias= case_when(
-#            is.na(fecha_entrega)  ~ fecha_corte-fecha_solicitud,
-#            !is.na(fecha_entrega)  ~ fecha_entrega-fecha_solicitud), 
-#          dias=as.numeric(dias)) %>% 
-#   filter(dias>0)
-# 
-# 
-# c_25 %>% 
-#   ggplot( aes(x=institucion, y=dias, fill=institucion)) +
-#   geom_violin(width=1.4) +
-#   # geom_jitter(height = 0, width = 0.1)
-#   geom_boxplot(width=0.1, color="grey", alpha=0.2) +
-#   scale_fill_manual(values=c("#005835", "#24893D","#8A1538")) +
-#   labs(title =stringr::str_wrap(glue::glue("Distribución de la diferencia de días entre el pedido y la entrega de medicamento, por institución"), 100),
-#        subtitle="Desde el 2 de junio al 18 de julio de 2025", x = "",
-#        y = "Días",
-#        caption = stringr::str_wrap(glue::glue("Fuente: Con datos de la Plataforma de Monitoreo de Medicamentos"), 100),
-#        fill="") +
-#   scale_y_continuous(labels = scales::label_comma(accuracy = 1), limits = c(0,48)) +
-#   theme_bw()+
-#   theme(text = element_text(color = "grey35"),
-#         plot.title = element_text(size = 15, face = "bold",  color = "grey35"),
-#         plot.subtitle = element_text(size = 10, face = "bold", colour = "#666666"),
-#         plot.caption = element_text(size = 10),
-#         legend.position = "none",
-#         panel.grid = element_blank(),
-#         panel.border =   element_blank(),
-#         axis.title = element_text(size = 14, face = "bold"),
-#         axis.ticks.y=element_blank(),
-#         axis.text = element_text(size = 10, face = "bold"))
-
-
-
 # proveedor ---------------------------------------------------------------
 
 prove <- conestados %>% 
@@ -347,7 +300,7 @@ scatplot %>%
 
 ggsave(here("out", "scatter.png"), width = 10, height = 7, units="in")
 
-# tiempo y claves ---------------------------------------------------------
+# tiempo, claves y proveedor ---------------------------------------------------------
 
 
 prove_tiempo <- conestados %>% 
@@ -439,7 +392,8 @@ gravedad <- conestados %>%
 write_csv(gravedad, here("out", "insumos_outliers.csv"))
 
 # descriptivo -------------------------------------------------------------
-
+# pregunta: ¿cuántos proveedores acumulan el 50% de las claves?
+# Respuesta: 35
 t <- conestados %>% 
   group_by(proveedor) %>% 
   summarise(n=n()) %>% 
